@@ -1,7 +1,6 @@
 # DevOps Engineer Interview Assignment: Broken Production Deploy
 
 **Time Limit:** 2 hours  
-**Difficulty:** Maximum (Expert Level)
 
 ## Scenario
 You are a DevOps engineer on-call. Production deployment of a microservices application is completely broken. The CI/CD pipeline fails, containers won't start, and the monitoring system isn't working.
@@ -31,20 +30,20 @@ The repository contains a git history with multiple commits. Some commits introd
 ```
 
 ## What You Need to Do
-- **Phase 1:** Git forensics — identify red herrings vs. real bugs
-- **Phase 2:** Fix docker-compose.yml — env vars, ports, healthchecks, security
-- **Phase 3:** Fix Ansible — inventory, modules, vault, firewall
-- **Phase 4:** Fix CI/CD — tests, multi-arch builds, secrets, approval gates
-- **Phase 5:** Fix monitoring script — log parsing, error rate, process safety
+- **Phase 1:** Fix docker-compose.yml — env vars, ports, healthchecks, security
+- **Phase 2:** Fix Ansible — inventory, modules, vault, firewall
+- **Phase 3:** Fix CI/CD — tests, multi-arch builds, secrets, approval gates
+- **Phase 4:** Fix monitoring script — log parsing, error rate, process safety
+- **Phase 5:** Git forensics — identify red herrings vs. real bugs (do it at last)
 
 ## Evaluation Criteria
 | Category | Weight |
 |----------|--------|
-| Git Forensics | 15% |
 | Docker Compose | 25% |
 | Ansible | 25% |
 | GitHub Actions | 20% |
 | Bash Monitoring | 15% |
+| Git Forensics | 15% |
 
 ## Submission
 1. Commit each fix separately with clear messages
