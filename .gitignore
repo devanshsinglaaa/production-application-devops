@@ -4,3 +4,8 @@
 *.pem
 __pycache__/
 *.pyc
+.vscode/
+.idea/
+*.swp
+.DS_Store
+.venv/
