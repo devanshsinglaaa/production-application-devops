@@ -11,14 +11,6 @@ DB_USER = os.environ.get('DB_USER', 'appuser')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', 'secret123')
 REDIS_HOST = os.environ.get('REDIS_HOST', 'redis')
 
-TABLE_SCHEMA = """
-CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255),
-    email VARCHAR(255)
-);
-"""
-
 db_conn = psycopg2.connect(
     host=DB_HOST,
     database=DB_NAME,
@@ -26,13 +18,8 @@ db_conn = psycopg2.connect(
     password=DB_PASSWORD
 )
 
-def init_db():
-    cur = db_conn.cursor()
-    cur.execute(TABLE_SCHEMA)
-    db_conn.commit()
-    cur.close()
-
-init_db()
+# BUG: init_db() and TABLE_SCHEMA for users table removed
+# User queries will fail with "relation does not exist"
 
 redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 
@@ -62,4 +49,4 @@ def cache_stats():
     return jsonify({"hits": info.get('keyspace_hits', 0), "misses": info.get('keyspace_misses', 0)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000, debug=True)
