@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN groupadd --system appgroup && useradd --system --group appuser
 
 WORKDIR /app
 
@@ -10,9 +10,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-RUN chown -R appuser:appgroup /app
+RUN chown -R root:root /app
 
-USER appuser
+# USER appuser
 
 EXPOSE 8080
 

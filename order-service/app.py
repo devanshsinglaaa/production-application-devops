@@ -14,7 +14,7 @@ SessionLocal = sessionmaker(bind=engine)
 TABLE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS orders (
     id VARCHAR(36) PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT,
     product_name VARCHAR(255),
     quantity INTEGER,
     total_price DECIMAL(10,2),
