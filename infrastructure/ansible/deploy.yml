@@ -1,0 +1,92 @@
+---
+- name: Deploy Production Stack
+  hosts: production
+  become: yes
+  gather_facts: yes
+
+  vars_files:
+    - vault/secrets.yml
+
+  vars:
+    app_dir: /opt/app
+    db_password: "{{ vault_db_password }}"
+    redis_password: "{{ vault_redis_password }}"
+
+  pre_tasks:
+    - name: Update and upgrade packages
+      package_manager:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Create application user
+      add_user:
+        name: appuser
+        system: yes
+        shell: /bin/bash
+
+  tasks:
+    - name: Install Docker dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker and Docker Compose
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Create application directory
+      file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: appuser
+        group: appuser
+
+    - name: Copy Docker Compose file
+      template:
+        src: ../templates/docker-compose.yml.j2
+        dest: "{{ app_dir }}/docker-compose.yml"
+
+    - name: Copy .env file with secrets (Ansible Vault)
+      copy:
+        content: |
+          DB_PASSWORD={{ db_password }}
+          REDIS_PASSWORD={{ redis_password }}
+        dest: "{{ app_dir }}/.env"
+      notify: Restart docker stack
+
+    - name: Start Docker Compose stack
+      docker_compose:
+        project_src: "{{ app_dir }}"
+        state: started
+
+    - name: Configure firewall (ufw)
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop:
+        - 22
+        - 80
+        - 443
+
+  handlers:
+    - name: Restart docker stack
+      shell: cd {{ app_dir }} && docker compose down && docker compose up -d
