@@ -54,3 +54,16 @@ The repository contains a git history with multiple commits. Some commits introd
 - 2 hours total
 - Use any resources available
 - Each fix should be committed separately
+
+## API Endpoints
+
+### User Service
+- `GET /users` - List all users
+- `GET /users/<id>` - Get user by ID
+- `GET /health` - Health check
+- `GET /cache/stats` - Cache statistics
+
+### Order Service
+- `POST /orders` - Create order
+- `GET /orders/user/<id>` - Get orders by user
+- `GET /health` - Health check
