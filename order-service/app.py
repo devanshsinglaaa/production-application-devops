@@ -11,10 +11,12 @@ DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://appuser:secret123@db
 engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine)
 
+
+#Fix 7 : In table schema SQL query, there was a syntax error for NOT NULL fixed.
 TABLE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS orders (
     id VARCHAR(36) PRIMARY KEY,
-    user_id INTEGER NOT,
+    user_id INTEGER NOT NULL,
     product_name VARCHAR(255),
     quantity INTEGER,
     total_price DECIMAL(10,2),
