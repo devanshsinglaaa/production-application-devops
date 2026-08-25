@@ -21,6 +21,44 @@ db_conn = psycopg2.connect(
 # BUG: init_db() and TABLE_SCHEMA for users table removed
 # User queries will fail with "relation does not exist"
 
+#Fix 9 : SCHEMA added for creating users table in postgreSQL so it makes the table.
+def init_db():
+
+    # PostgreSQL initialization
+    try:
+        cur = db_conn.cursor()
+
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(100) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE
+            );
+        """)
+
+        db_conn.commit()
+        cur.close()
+
+        print("PostgreSQL users table initialized successfully")
+
+    except psycopg2.Error as e:
+        db_conn.rollback()
+        print(f"PostgreSQL init failed: {e}")
+
+    # Redis initialization
+    try:
+        redis_client.ping()
+
+        redis_client.set(
+            "app:initialized",
+            "true"
+        )
+
+        print("Redis initialized successfully")
+
+    except redis.RedisError as e:
+        print(f"Redis init failed: {e}")
+
 redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 
 @app.route('/health')
@@ -49,4 +87,6 @@ def cache_stats():
     return jsonify({"hits": info.get('keyspace_hits', 0), "misses": info.get('keyspace_misses', 0)})
 
 if __name__ == '__main__':
+    # Fix 9.1 : init_db() called
+    init_db()
     app.run(host='0.0.0.0', port=8000, debug=True)

@@ -40,7 +40,8 @@ init_db()
 def health():
     return jsonify({"status": "healthy", "service": "order-service"}), 200
 
-@app.route('/orders', methods=['POST'])
+# Fix 8 : added GET method request so browser can serve it to port 8080 to nginx for reverse proxy
+@app.route('/orders', methods=['POST','GET'])
 def create_order():
     data = request.get_json()
     order_id = str(uuid.uuid4())
