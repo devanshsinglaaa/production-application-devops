@@ -19,16 +19,11 @@ jobs:
           cd user-service && pip install --no-cache-dir -r requirements.txt
           cd ../order-service && pip install --no-cache-dir -r requirements.txt
 
-      #Fix 4 : run docker compose up -d in ci because user-service && order-service needs to communicate with db
-      - name: Run Docker compose containers
-        run: |
-          docker compose up -d
 
-      #Fix 5 : run user-service python tests inside docker container so that it can use docker network
-      - name: Run Python tests in docker containers.
+      - name: Run Python tests
         run: |
-          docker compose exec -T user-service python app.py --test
-          docker compose exec -T order-service python app.py --test
+          cd user-service && pytest
+          cd ../order-service && pytest
 
   build-and-push:
     needs: test
