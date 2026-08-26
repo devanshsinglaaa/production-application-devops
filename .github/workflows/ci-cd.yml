@@ -36,7 +36,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: true
+          #Fix : push has to set to false
+          push: false
 
   deploy:
     needs: build-and-push
