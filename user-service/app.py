@@ -2,6 +2,8 @@ import os
 import psycopg2
 import redis
 from flask import Flask, jsonify
+import sys
+
 
 app = Flask(__name__)
 
@@ -85,6 +87,37 @@ def list_users():
 def cache_stats():
     info = redis_client.info()
     return jsonify({"hits": info.get('keyspace_hits', 0), "misses": info.get('keyspace_misses', 0)})
+
+#Fix 4 : Add tests to app.py in user service, there were no tests added in app.py so python app.py --test do not do anything.
+def run_tests():
+    print("Running user-service tests...")
+
+    assert app is not None
+    print("✓ Flask application initialized")
+
+    redis_client.ping()
+    print("✓ Redis connection successful")
+
+    cur = db_conn.cursor()
+    cur.execute("SELECT 1")
+    cur.fetchone()
+    cur.close()
+    print("✓ PostgreSQL connection successful")
+
+    print("All tests passed")
+
+
+if __name__ == '__main__':
+    init_db()
+
+    if '--test' in sys.argv:
+        run_tests()
+    else:
+        app.run(
+            host='0.0.0.0',
+            port=8000,
+            debug=True
+        )
 
 if __name__ == '__main__':
     # Fix 9.1 : init_db() called
