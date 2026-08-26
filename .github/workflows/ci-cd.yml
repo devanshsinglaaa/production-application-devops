@@ -23,7 +23,7 @@ jobs:
       - name: Run Python tests
         run: |
           cd user-service && python app.py --test
-          cd order-service && python app.py --test
+          cd ../order-service && python app.py --test
 
   build-and-push:
     needs: test
