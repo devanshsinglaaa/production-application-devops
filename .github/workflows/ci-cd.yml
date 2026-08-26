@@ -2,9 +2,10 @@ name: Broken CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    #Fix 2 (optional) : change push/pull_req branch in workflow call.
+    branches: [final_fix]
   pull_request:
-    branches: [main]
+    branches: [final_fix]
 
 jobs:
   test:
