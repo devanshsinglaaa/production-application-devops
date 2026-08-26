@@ -17,7 +17,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd user-service && pip install --no-cache-dir -r requirements.txt
-          cd order-service && pip install --no-cache-dir -r requirements.txt
+          cd ../order-service && pip install --no-cache-dir -r requirements.txt
 
 
       - name: Run Python tests
