@@ -1,2 +1,1 @@
-vault_db_password: ""
-vault_redis_password: "secret123"
+mysecretpassword

@@ -44,6 +44,6 @@ jobs:
       - name: Deploy to production
         run: |
           cd infrastructure
-          ansible-playbook -i ansible/inventory.ini ansible/deploy.yml
+           ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --vault-password-file ansible/vault-pass.txt
         env:
           ANSIBLE_VAULT_PASSWORD: mysecretpassword
