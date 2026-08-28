@@ -41,9 +41,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 44.244.233.168 >> ~/.ssh/known_hosts
+
       - name: Deploy to production
         run: |
           cd infrastructure
-           ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --vault-password-file ansible/vault-pass.txt
+          ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --vault-password-file ansible/vault-pass.txt
         env:
           ANSIBLE_VAULT_PASSWORD: mysecretpassword

@@ -25,6 +25,7 @@ parse_logs() {
 calculate_rate() {
     local errors=$1
     local total=$2
+    #Fix 1 : syntax error fixed.
     local rate=$(( (errors * 100) / total ))
     echo "$rate"
 }
