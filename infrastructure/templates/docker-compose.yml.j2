@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  user-service:
+    build: ./user-service
+    environment:
+      - REDIS_HOST=redis
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+      - redis
+
+  order-service:
+    build: ./order-service
+    environment:
+      - DATABASE_URL=postgresql://appuser:secret123@db:5432/appdb
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-service
+      - order-service
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: appdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  postgres_data:

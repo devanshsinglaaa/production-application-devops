@@ -14,14 +14,17 @@
 
   pre_tasks:
     - name: Update and upgrade packages
-      package_manager:
+      # Fix 2 : apt instead of package_manager for ubuntu.
+      apt:
         update_cache: yes
         upgrade: dist
 
     - name: Create application user
-      add_user:
+      # Fix 3 : update add_user to ansible.builtin.user
+      ansible.builtin.user:
         name: appuser
-        system: yes
+        system: true
+        create_home: false
         shell: /bin/bash
 
   tasks:
@@ -33,15 +36,22 @@
           - curl
         state: present
 
-    - name: Add Docker GPG key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    #Fix 5 : GPG keys are using old approach and apt_key is now depreciated & giving error so, I have to changed the approach to new keyring approach where Adding GPG Key and Adding docker repository command changes to modern keyring approach.
 
-    - name: Add Docker repository
-      apt_repository:
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: "https://download.docker.com/linux/ubuntu/gpg"  # Direct URL to public key
+        dest: "/etc/apt/trusted.gpg.d/docker-ce.gpg"  # Keyring file path
+        mode: '0644'  # Required permissions (read/write for root, read for others)
+        owner: appuser
+        group: appuser
+ 
+    - name: Add Docker repository to sources.list.d
+      ansible.builtin.apt_repository:
         repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
         state: present
+        filename: "docker-ce"  # Creates /etc/apt/sources.list.d/docker-ce.list
+        update_cache: true  # Run `apt update` after adding
 
     - name: Install Docker and Docker Compose
       apt:
@@ -72,10 +82,17 @@
         dest: "{{ app_dir }}/.env"
       notify: Restart docker stack
 
+    - name: Install Python Docker SDK
+      become: true
+      ansible.builtin.apt:
+        name: python3-docker
+        state: present
+        update_cache: true
+
     - name: Start Docker Compose stack
-      docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ app_dir }}"
-        state: started
+        state: present
 
     - name: Configure firewall (ufw)
       ufw:
