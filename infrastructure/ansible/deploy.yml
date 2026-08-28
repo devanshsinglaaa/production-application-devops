@@ -94,11 +94,6 @@
         project_src: "{{ app_dir }}"
         state: present
 
-    - name: Configure Ansible Vault password
-      run: |
-        printf '%s\n' "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > infrastructure/ansible/vault-pass.txt
-        chmod 600 infrastructure/ansible/vault-pass.txt
-
     - name: Configure firewall (ufw)
       ufw:
         rule: allow
