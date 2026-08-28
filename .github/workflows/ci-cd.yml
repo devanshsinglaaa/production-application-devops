@@ -42,10 +42,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/test-node-1-key.pem
+          chmod 600 ~/.ssh/test-node-1-key.pem
+
       - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H 44.244.233.168 >> ~/.ssh/known_hosts
+
+      - name: Configure Ansible Vault password
+        run: |
+          printf '%s\n' "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > infrastructure/ansible/vault-pass.txt
+          chmod 600 infrastructure/ansible/vault-pass.txt
 
       - name: Deploy to production
         run: |
