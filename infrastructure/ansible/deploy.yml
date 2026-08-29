@@ -89,6 +89,12 @@
         state: present
         update_cache: true
 
+    - name: Add appuser to docker group
+      ansible.builtin.user:
+        name: appuser
+        groups: docker
+        append: true
+
     - name: Start Docker Compose stack as appuser
       ansible.builtin.command:
         cmd: sudo -u appuser docker compose up -d
