@@ -89,12 +89,11 @@
         state: present
         update_cache: true
 
-    - name: Start Docker Compose stack
-      community.docker.docker_compose_v2:
-        project_src: "{{ app_dir }}"
-        state: present
+    - name: Start Docker Compose stack as appuser
+      ansible.builtin.command:
+        cmd: sudo -u appuser docker compose up -d
+        chdir: "{{ app_dir }}"
       become: true
-      become_user: appuser
 
     - name: Configure firewall (ufw)
       ufw:
@@ -109,7 +108,5 @@
   handlers:
     - name: Restart docker stack
       ansible.builtin.shell:
-        cmd: docker compose down && docker compose up -d
+        cmd: sudo -u appuser docker compose down && sudo -u appuser docker compose up -d
         chdir: "{{ app_dir }}"
-      become: true
-      become_user: appuser
