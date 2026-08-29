@@ -12,7 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 #Fix 2 : root:root gives all root permissions and there is no use of making addgroup and appuser then.
-RUN chown -R root:root /app
+# RUN chown -R root:root /app
+RUN chown -R appuser:appuser /app
 
 # Fix 3 : USER appuser is commented, we have to uncomment it so the application do not run as ROOT user.
 USER appuser
