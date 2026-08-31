@@ -68,6 +68,7 @@
         state: directory
         owner: appuser
         group: appuser
+        mode: '0755'
 
     - name: Copy user service
       ansible.builtin.copy:
@@ -86,9 +87,12 @@
         mode: "0755"
 
     - name: Copy Docker Compose file
-      template:
+      ansible.builtin.template:
         src: ../templates/docker-compose.yml.j2
         dest: "{{ app_dir }}/docker-compose.yml"
+        owner: appuser
+        group: appuser
+        mode: "0644"
 
     - name: Copy .env file with secrets (Ansible Vault)
       copy:
@@ -96,6 +100,9 @@
           DB_PASSWORD={{ db_password }}
           REDIS_PASSWORD={{ redis_password }}
         dest: "{{ app_dir }}/.env"
+        owner: appuser
+        group: appuser
+        mode: "0600"
       notify: Restart docker stack
 
     - name: Install Python Docker SDK
@@ -111,9 +118,15 @@
         groups: docker
         append: true
 
+    - name: Stop existing Docker Compose stack
+      ansible.builtin.command:
+        cmd: sudo -u appuser docker compose down
+        chdir: "{{ app_dir }}"
+      become: true
+
     - name: Start Docker Compose stack as appuser
       ansible.builtin.command:
-        cmd: sudo -u appuser docker compose up -d
+        cmd: sudo -u appuser docker compose up -d --build
         chdir: "{{ app_dir }}"
       become: true
 
@@ -130,5 +143,5 @@
   handlers:
     - name: Restart docker stack
       ansible.builtin.shell:
-        cmd: sudo -u appuser docker compose down && sudo -u appuser docker compose up -d
+        cmd: sudo -u appuser docker compose down && sudo -u appuser docker compose up -d --build
         chdir: "{{ app_dir }}"
