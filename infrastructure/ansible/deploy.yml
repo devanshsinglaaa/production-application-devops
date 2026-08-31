@@ -69,6 +69,22 @@
         owner: appuser
         group: appuser
 
+    - name: Copy user service
+      ansible.builtin.copy:
+        src: ../../user-service/
+        dest: "{{ app_dir }}/user-service/"
+        owner: appuser
+        group: appuser
+        mode: "0755"
+
+    - name: Copy order service
+      ansible.builtin.copy:
+        src: ../../order-service/
+        dest: "{{ app_dir }}/order-service/"
+        owner: appuser
+        group: appuser
+        mode: "0755"
+
     - name: Copy Docker Compose file
       template:
         src: ../templates/docker-compose.yml.j2
