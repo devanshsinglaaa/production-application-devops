@@ -45,6 +45,10 @@
         mode: '0644'  # Required permissions (read/write for root, read for others)
         owner: appuser
         group: appuser
+
+    - name: Update cache
+      run: |
+        sudo apt-get update
  
     - name: Add Docker repository to sources.list.d
       ansible.builtin.apt_repository:
