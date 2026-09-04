@@ -94,6 +94,8 @@
         group: appuser
         mode: '0755'
 
+    # deleted nginx directory to make a file
+
     - name: Create nginx directory
       ansible.builtin.file:
         path: "{{ app_dir }}/nginx"
