@@ -96,7 +96,7 @@
 
     # deleted nginx directory to make a file
 
-    - name: Create nginx directory
+    - name: Create nginx directory if not exist.
       ansible.builtin.file:
         path: "{{ app_dir }}/nginx"
         state: directory
