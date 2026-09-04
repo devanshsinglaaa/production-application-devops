@@ -46,9 +46,10 @@
         owner: appuser
         group: appuser
 
-    - name: Update cache
-      run: |
-        sudo apt-get update
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      ignore_errors: yes
  
     - name: Add Docker repository to sources.list.d
       ansible.builtin.apt_repository:
