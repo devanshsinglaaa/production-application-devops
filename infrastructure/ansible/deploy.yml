@@ -150,7 +150,7 @@
 
     - name: Start Docker Compose stack as appuser
       ansible.builtin.command:
-        cmd: sudo -u appuser docker compose up -d --build
+        cmd: sudo -u appuser docker compose up -d
         chdir: "{{ app_dir }}"
       become: true
 
