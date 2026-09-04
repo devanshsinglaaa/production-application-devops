@@ -94,6 +94,22 @@
         group: appuser
         mode: '0755'
 
+    - name: Create nginx directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}/nginx"
+        state: directory
+        owner: appuser
+        group: appuser
+        mode: '0755'
+
+    - name: Copy nginx configuration
+      ansible.builtin.copy:
+        src: ../../nginx/nginx.conf
+        dest: "{{ app_dir }}/nginx/nginx.conf"
+        owner: appuser
+        group: appuser
+        mode: '0644'
+
     - name: Copy user service
       ansible.builtin.copy:
         src: ../../user-service/
@@ -150,7 +166,7 @@
 
     - name: Start Docker Compose stack as appuser
       ansible.builtin.command:
-        cmd: sudo -u appuser docker compose up -d
+        cmd: sudo -u appuser docker compose up -d --build
         chdir: "{{ app_dir }}"
       become: true
 
